@@ -10,15 +10,22 @@ import (
 
 	"github.com/microservices-demo/user/users"
 
-	"gopkg.in/mgo.v2"
-	"gopkg.in/mgo.v2/bson"
+	"github.com/globalsign/mgo"
+	"github.com/globalsign/mgo/bson"
+	//"gopkg.in/mgo.v2"
+	//"gopkg.in/mgo.v2/bson"
+
+    //"crypto/tls"
+    //"net"	
 )
 
 var (
 	name     string
 	password string
 	host     string
-	db       = "users"
+	// db       = "users"
+	db       string
+	uri      string
 	//ErrInvalidHexID represents a entity id that is not a valid bson ObjectID
 	ErrInvalidHexID = errors.New("Invalid Id Hex")
 )
@@ -27,6 +34,8 @@ func init() {
 	flag.StringVar(&name, "mongo-user", os.Getenv("MONGO_USER"), "Mongo user")
 	flag.StringVar(&password, "mongo-password", os.Getenv("MONGO_PASS"), "Mongo password")
 	flag.StringVar(&host, "mongo-host", os.Getenv("MONGO_HOST"), "Mongo host")
+	flag.StringVar(&db, "mongo-database", os.Getenv("MONGO_DATABASE"), "Mongo database")
+	flag.StringVar(&uri, "mongo-uri", os.Getenv("MONGO_URI"), "Mongo uri")
 }
 
 // Mongo meets the Database interface requirements
@@ -39,7 +48,37 @@ type Mongo struct {
 func (m *Mongo) Init() error {
 	u := getURL()
 	var err error
-	m.Session, err = mgo.DialWithTimeout(u.String(), time.Duration(5)*time.Second)
+	fmt.Print("ignore> ")
+	fmt.Println(u.String())
+	fmt.Print("used> ")
+	fmt.Println(uri)
+
+	/*
+	tlsConfig := &tls.Config{}
+
+	dialInfo := &mgo.DialInfo{
+		Addrs: []string{"user-db-shard-00-00-vvczq.mongodb.net:27017", 
+						"user-db-shard-00-01-vvczq.mongodb.net:27017",
+						"user-db-shard-00-02-vvczq.mongodb.net:27017"},
+		Timeout:  60 * time.Second,
+    	Database: "test",
+    	Username: "user-db-user",
+    	Password: "user-db4SockShop",
+	}
+	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+		if err != nil {
+			fmt.Print("error log: ")
+			fmt.Println(err)
+		} else {
+			fmt.Println("ok")
+		}
+    	return conn, err
+	}
+	m.Session, err = mgo.DialWithInfo(dialInfo)
+	*/
+
+	m.Session, err = mgo.DialWithTimeout(uri, time.Duration(5)*time.Second)
 	if err != nil {
 		return err
 	}

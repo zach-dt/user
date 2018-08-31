@@ -35,7 +35,7 @@ var (
 	//DBTypes is a map of DB interfaces that can be used for this service
 	DBTypes = map[string]Database{}
 	//ErrNoDatabaseFound error returnes when database interface does not exists in DBTypes
-	ErrNoDatabaseFound = "No database with name %v registered"
+	ErrNoDatabaseFound = "No Database with Name %v registered"
 	//ErrNoDatabaseSelected is returned when no database was designated in the flag or env
 	ErrNoDatabaseSelected = errors.New("No DB selected")
 )

@@ -1,0 +1,7 @@
+---
+applications:
+- name: user
+  memory: 512M
+  instances: 1
+  docker:
+    image: jbraeuer/user

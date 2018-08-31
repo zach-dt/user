@@ -20,6 +20,9 @@ import:
 - package: gopkg.in/mgo.v2
   subpackages:
   - bson
+- package: github.com/globalsign/mgo
+  subpackages:
+  - bson
 - package: gopkg.in/tomb.v2
 - package: github.com/afex/hystrix-go
   subpackages:

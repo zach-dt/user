@@ -9,7 +9,6 @@ TAG=$(TRAVIS_COMMIT)
 
 default: docker
 
-
 pre: 
 	go get -v github.com/Masterminds/glide
 
@@ -37,7 +36,6 @@ coverprofile:
 	mv gover.coverprofile cover.profile
 	rm *.coverprofile
 
-
 dockerdev:
 	docker build -t $(INSTANCE)-dev .
 
@@ -49,13 +47,13 @@ dockerruntest: dockertestdb dockerdev
 	docker run -d --name $(INSTANCE)-dev -p 8084:8084 --link my$(TESTDB) -e MONGO_HOST="my$(TESTDB):27017" $(INSTANCE)-dev
 
 docker:
-	docker build -t $(NAME) -f docker/user/Dockerfile-release .
+	docker build -t $(NAME) -f docker/user/Dockerfile .
 
 dockerlocal:
-	docker build -t $(INSTANCE)-local -f docker/user/Dockerfile-release .
+	docker build -t $(INSTANCE)-local -f docker/user/Dockerfile .
 
 dockertravisbuild: 
-	docker build -t $(NAME):$(TAG) -f docker/user/Dockerfile-release .
+	docker build -t $(NAME):$(TAG) -f docker/user/Dockerfile .
 	docker build -t $(DBNAME):$(TAG) -f docker/user-db/Dockerfile docker/user-db/
 	if [ -z "$(DOCKER_PASS)" ]; then \
 		echo "This is a build triggered by an external PR. Skipping docker push."; \
