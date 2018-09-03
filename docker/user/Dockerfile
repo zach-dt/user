@@ -37,7 +37,7 @@ ENV MONGO_URI mongodb://user-db-user:user-db4SockShop@user-db-shard-00-00-vvczq.
 
 WORKDIR /
 EXPOSE 8080
-COPY --from=0 /user /
+COPY /user /
 
 RUN	chmod +x /user && \
 	chown -R ${SERVICE_USER}:${SERVICE_GROUP} /user && \
