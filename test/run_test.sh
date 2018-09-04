@@ -31,4 +31,4 @@ fi
 
 sudo rm -f -r $2
 sudo mkdir $2
-sudo docker run --name jmeter-test -v "${PWD}/scripts":/load -v "${PWD}/$2":/results --rm -d jmeter ./jmeter/bin/jmeter.sh -n -t /load/$1 -e -o /results -l result.tlf -JSERVER_URL="$3" -JDT_LTN="$DT_LTN"
+sudo docker run --name jmeter-test -v "${PWD}/load":/load -v "${PWD}/$2":/results --rm -d jmeter ./jmeter/bin/jmeter.sh -n -t /load/$1 -e -o /results -l result.tlf -JSERVER_URL="$3" -JDT_LTN="$DT_LTN"
