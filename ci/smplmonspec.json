@@ -3,7 +3,7 @@
         "etype": "SERVICE",
         "_comment_etype" : "Options are SERVICE, APPLICATION, HOST, PROCESS_GROUP_INSTANCE",
         "name": "user",
-        "owner" : "TeamMike",
+        "owner" : "user-team",
         "_comment" : "This defines our initial thoughts about monitoring!",
         "environments" : { 
             "Staging" : {
