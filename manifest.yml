@@ -4,4 +4,4 @@ applications:
   memory: 512M
   instances: 1
   docker:
-    image: jbraeuer/user
+    image: DOCKER-HUB-ACCOUNT/user
