@@ -1,6 +1,6 @@
 ---
 applications:
-- name: user
+- name: APPNAME
   memory: 512M
   instances: 1
   docker:
