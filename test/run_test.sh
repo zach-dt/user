@@ -20,15 +20,23 @@ fi
 
 ADDITIONAL_PARAMS=""
 if [ -z "$4" ]; then
+  echo "Default VUCount"
+else
   ADDITIONAL_PARAMS=$ADDITIONAL_PARAMS+"-JVUCount=$4"
 fi
 if [ -z "$5" ]; then
+  echo "Default LoopCount"
+else
   ADDITIONAL_PARAMS=$ADDITIONAL_PARAMS+" -JLoopCount=$5"
 fi
 if [ -z "$6" ]; then
+  echo "Default ThinkTime"
+else
   ADDITIONAL_PARAMS=$ADDITIONAL_PARAMS+" -JThinkTime=$6"
 fi
 
+echo "Running with SERVER_URL=$3, AdditionalParams=$ADDITIONAL_PARAMS"
+
 sudo rm -f -r $2
 sudo mkdir $2
-sudo docker run --name jmeter-test -v "${PWD}/load":/load -v "${PWD}/$2":/results --rm -d jmeter ./jmeter/bin/jmeter.sh -n -t /load/$1 -e -o /results -l result.tlf -JSERVER_URL="$3" -JDT_LTN="$DT_LTN"
+sudo docker run --name jmeter-test -v "${PWD}/load":/load -v "${PWD}/$2":/results --rm -d jmeter ./jmeter/bin/jmeter.sh -n -t /load/$1 -e -o /results -l result.tlf -JSERVER_URL="$3" -JDT_LTN="$DT_LTN" $ADDITIONAL_PARAMS
