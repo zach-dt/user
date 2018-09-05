@@ -16,7 +16,6 @@ groups:
   jobs: 
   - init-dynatrace-user
 
-
 resource_types:
 - name: dynatrace-resource
   type: docker-image
