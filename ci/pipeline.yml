@@ -133,7 +133,9 @@ jobs:
   public: true
   plan:
   - get: git-user
-    trigger: false
+    trigger: true
+    passed: 
+    - build-user
   - put: user-test-image
     params:
       build: git-user
