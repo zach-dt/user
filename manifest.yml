@@ -1,7 +1,12 @@
 ---
 applications:
-- name: user
+- name: APPNAME
   memory: 512M
   instances: 1
   docker:
-    image: jbraeuer/user
+    image: DOCKER_HUB_ACCOUNT/user
+  env:
+    DT_NODE_ID: APPNAME
+    DT_CUSTOM_PROP: DEPLOYMENT_GRP_NME=DTGRP DEPLOYMENT_COLOR=APPCOLOR
+    DEPLOYMENT_GRP_NME: DTGRP
+    DUMMY_VAR: changethisagain2
