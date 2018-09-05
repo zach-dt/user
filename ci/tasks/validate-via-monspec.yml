@@ -1,0 +1,19 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: mvilliger/dynatrace-cli
+    tag: "latest"
+
+inputs:
+- name: current-app-info
+- name: git-pipeline
+- name: git-user
+  optional: true
+- name: git-orders
+  optional: true
+
+run:
+  path: ./git-pipeline/deploy/cloud-foundry/ci/tasks/validate-via-monspec
