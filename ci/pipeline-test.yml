@@ -213,6 +213,7 @@ jobs:
     - get: user-image
   - task: create-user-release-tarball
     image: user-image
+    user: root
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/prepare-release.yml
     params:
       APP_REPO: git-user 
