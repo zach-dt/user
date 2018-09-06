@@ -210,6 +210,7 @@ jobs:
       trigger: true
       passed: 
       - execute-user-functional-tests
+    - get: user-image
   - task: create-user-release-tarball
     image: user-image
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/prepare-release.yml
