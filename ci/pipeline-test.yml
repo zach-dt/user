@@ -219,7 +219,7 @@ jobs:
   - put: user-release
     params:
       name: ./prepared-release/name
-    #   tag: path/to/tag/file
+      tag: ./prepared-release/tag
     #   body: path/to/body/file
       globs:
       - ./prepared-release/user*.tgz
