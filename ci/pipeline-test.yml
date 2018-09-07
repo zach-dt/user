@@ -210,6 +210,7 @@ jobs:
       trigger: true
       passed: 
       - execute-user-functional-tests
+    - get: user-image
   - task: create-user-release-tarball
     image: user-image
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/prepare-release.yml
@@ -217,11 +218,11 @@ jobs:
       APP_REPO: git-user 
   - put: user-release
     params:
-      name: ./prepared-release/name
-    #   tag: path/to/tag/file
+      name: prepared-release/name
+      tag: prepared-release/tag
     #   body: path/to/body/file
       globs:
-      - ./prepared-release/user*.tgz
+      - prepared-release/user*.tgz
 
 # - name: deploy-user-to-prod
 #   serial: true
