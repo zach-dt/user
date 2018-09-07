@@ -95,7 +95,7 @@ pipeline {
       }
       stage('Health Check Staging') {
         steps {
-          build job: "${env.ORG}/jmeter-as-container/master", 
+          build job: "${env.ORG}/jmeter-tests/master", 
             parameters: [
               string(name: 'BUILD_JMETER', value: 'no'), 
               string(name: 'SCRIPT_NAME', value: 'basiccheck.jmx'), 
@@ -113,7 +113,7 @@ pipeline {
       }
       stage('Functional Check Staging') {
         steps {
-          build job: "${env.ORG}/jmeter-as-container/master", 
+          build job: "${env.ORG}/jmeter-tests/master", 
             parameters: [
               string(name: 'BUILD_JMETER', value: 'no'), 
               string(name: 'SCRIPT_NAME', value: 'user_basic.jmx'), 
@@ -131,7 +131,7 @@ pipeline {
       }
       stage('Performance Check Staging') {
         steps {
-          build job: "${env.ORG}/jmeter-as-container/master", 
+          build job: "${env.ORG}/jmeter-tests/master", 
             parameters: [
               string(name: 'BUILD_JMETER', value: 'no'), 
               string(name: 'SCRIPT_NAME', value: 'user_basic.jmx'), 
