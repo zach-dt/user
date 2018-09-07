@@ -218,11 +218,11 @@ jobs:
       APP_REPO: git-user 
   - put: user-release
     params:
-      name: ./prepared-release/name
-      tag: ./prepared-release/tag
+      name: prepared-release/name
+      tag: prepared-release/tag
     #   body: path/to/body/file
       globs:
-      - ./prepared-release/user*.tgz
+      - prepared-release/user*.tgz
 
 # - name: deploy-user-to-prod
 #   serial: true
