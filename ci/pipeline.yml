@@ -238,7 +238,6 @@ jobs:
       PCF_PWD: ((pcf-prod-deploy-password))
       PCF_SPACE: ((pcf-prod-space))           
   - task: run-load-tests
-    image: user-test-image
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/load-tests.yml
     params:
       APP_REPO: git-user
