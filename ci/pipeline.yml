@@ -4,11 +4,11 @@ groups:
   jobs:
   - build-user
   - deploy-user-to-stage
-  - execute-user-functional-tests
-  # - deploy-user-to-prod
-  # - execute-user-load-tests
-  # - validate-user-load-test
-  # - promote-new-version-user
+  - health-check
+  - deploy-user-to-prod
+  - execute-user-load-tests
+  - validate-user-load-test
+  - promote-new-version-user
   - upload-users-git-release
 
 - name: init-dynatrace
@@ -75,15 +75,15 @@ resources:
     space: ((pcf-stage-space))
     skip_cert_check: false
 
-# - name: pcf-production
-#   type: cf
-#   source:
-#     api: ((pcf-prod-api))
-#     username: ((pcf-prod-deploy-username))
-#     password: ((pcf-prod-deploy-password))
-#     organization: ((pcf-prod-organization))
-#     space: ((pcf-prod-space))
-#     skip_cert_check: false
+- name: pcf-production
+  type: cf
+  source:
+    api: ((pcf-prod-api))
+    username: ((pcf-prod-deploy-username))
+    password: ((pcf-prod-deploy-password))
+    organization: ((pcf-prod-organization))
+    space: ((pcf-prod-space))
+    skip_cert_check: false
 
 jobs:
 
@@ -253,141 +253,62 @@ jobs:
       tenanthost: ((tenanthost))
       APP_REPO: git-user   
 
-
-# - name: deploy-user-to-prod
-#   serial: true
-#   public: true
-#   plan:
-#   - get: git-user
-#     trigger: true
-#     passed:
-#       - execute-user-functional-tests 
-#   - get: git-pipeline
-#     trigger: false
-#   - task: get-current-app-color
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/current-app-get-info.yml
-#     params:
-#       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
-#       PCF_API: ((pcf-prod-api))
-#       PCF_ORG: ((pcf-prod-organization))
-#       PCF_USER: ((pcf-prod-deploy-username))
-#       PCF_PWD: ((pcf-prod-deploy-password))
-#       PCF_SPACE: ((pcf-prod-space))              
-#   - task: prepare-app-manifest
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/app-manifest-prep.yml
-#     params:
-#       PCF_APP_SUFFIX: ((pcf-prod-user-suffix)) 
-#       DOCKER_HUB_ACCOUNT: ((docker-hub-username))
-#       APP_REPO: git-user
-#       PRODUCTION: true       
-#   - put: dynatrace
-#     params:
-#       monspecserviceenvironment: user/Production
-#       pipelinetaskname: deploy-user-to-prod
-#       deployversion: v1.0 
-#       APP_REPO: git-user      
-#   - put: pcf-production
-#     params:
-#         manifest: app-manifest-output/manifest.yml 
+- name: validate-user-load-test
+  serial: true
+  public: true
+  plan:
+  - get: git-user
+    trigger: true
+    passed:
+      - execute-user-load-tests
+  - get: git-pipeline
+    trigger: false      
+  - task: get-current-app-color
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/current-app-get-info.yml
+    params:
+      PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
+      PCF_API: ((pcf-prod-api))
+      PCF_ORG: ((pcf-prod-organization))
+      PCF_USER: ((pcf-prod-deploy-username))
+      PCF_PWD: ((pcf-prod-deploy-password))
+      PCF_SPACE: ((pcf-prod-space))       
+  - task: validate-via-monspec
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/validate-via-monspec.yml
+    params: 
+      monspeccomparison: user/Production-$NEXT_APP_COLOR\ToProduction-$CURRENT_APP_COLOR\Last5m
+      apitoken: ((apitoken))
+      tenanthost: ((tenanthost))
+      APP_REPO: git-user     
 
 - name: promote-new-version-user
   serial: true
-# - name: execute-user-load-tests
-#   serial: true
-#   public: true
-#   plan:
-#   - aggregate:
-#     - get: git-user
-#       trigger: true
-#       passed:
-#         - deploy-user-to-prod
-#     - get: user-test-image
-#       passed:
-#         - build-user-test-image
-#     - get: git-pipeline
-#       trigger: false        
-#   - task: get-current-app-color
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/current-app-get-info.yml
-#     params:
-#       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
-#       PCF_API: ((pcf-prod-api))
-#       PCF_ORG: ((pcf-prod-organization))
-#       PCF_USER: ((pcf-prod-deploy-username))
-#       PCF_PWD: ((pcf-prod-deploy-password))
-#       PCF_SPACE: ((pcf-prod-space))           
-#   - task: run-load-tests
-#     image: user-test-image
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/load-tests.yml
-#     params:
-#       APP_REPO: git-user
-#       PRODUCTION: true
-#       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
-#       PCF_APP_DOMAIN: ((pcf-prod-app-domain))   
-#   - task: push-dynatrace-monspec-data
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/push-dynatrace-monspec-data.yml
-#     params: 
-#       monspecserviceenvironment: user/Production-$NEXT_APP_COLOR
-#       apitoken: ((apitoken))
-#       tenanthost: ((tenanthost))
-#       APP_REPO: git-user   
-
-# - name: validate-user-load-test
-#   serial: true
-#   public: true
-#   plan:
-#   - get: git-user
-#     trigger: true
-#     passed:
-#       - execute-user-load-tests
-#   - get: git-pipeline
-#     trigger: false      
-#   - task: get-current-app-color
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/current-app-get-info.yml
-#     params:
-#       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
-#       PCF_API: ((pcf-prod-api))
-#       PCF_ORG: ((pcf-prod-organization))
-#       PCF_USER: ((pcf-prod-deploy-username))
-#       PCF_PWD: ((pcf-prod-deploy-password))
-#       PCF_SPACE: ((pcf-prod-space))       
-#   - task: validate-via-monspec
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/validate-via-monspec.yml
-#     params: 
-#       monspeccomparison: user/Production-$NEXT_APP_COLOR\ToProduction-$CURRENT_APP_COLOR\Last5m
-#       apitoken: ((apitoken))
-#       tenanthost: ((tenanthost))
-#       APP_REPO: git-user     
-
-
-# - name: promote-new-version-user
-#   serial: true
-#   public: true
-#   plan:
-#   - get: git-user
-#     trigger: true
-#     passed:
-#       - validate-user-load-test
-#   - get: git-pipeline
-#     trigger: false      
-#   - task: get-current-app-color
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/current-app-get-info.yml
-#     params:
-#       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
-#       PCF_API: ((pcf-prod-api))
-#       PCF_ORG: ((pcf-prod-organization))
-#       PCF_USER: ((pcf-prod-deploy-username))
-#       PCF_PWD: ((pcf-prod-deploy-password))
-#       PCF_SPACE: ((pcf-prod-space))   
-#   - task: switch-app-routes
-#     file: git-pipeline/deploy/cloud-foundry/ci/tasks/update-routes.yml
-#     params:
-#       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
-#       PCF_API: ((pcf-prod-api))
-#       PCF_ORG: ((pcf-prod-organization))
-#       PCF_USER: ((pcf-prod-deploy-username))
-#       PCF_PWD: ((pcf-prod-deploy-password))
-#       PCF_SPACE: ((pcf-prod-space))
-#       PCF_APP_DOMAIN: ((pcf-prod-app-domain))              
+  public: true
+  plan:
+  - get: git-user
+    trigger: true
+    passed:
+      - validate-user-load-test
+  - get: git-pipeline
+    trigger: false      
+  - task: get-current-app-color
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/current-app-get-info.yml
+    params:
+      PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
+      PCF_API: ((pcf-prod-api))
+      PCF_ORG: ((pcf-prod-organization))
+      PCF_USER: ((pcf-prod-deploy-username))
+      PCF_PWD: ((pcf-prod-deploy-password))
+      PCF_SPACE: ((pcf-prod-space))   
+  - task: switch-app-routes
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/update-routes.yml
+    params:
+      PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
+      PCF_API: ((pcf-prod-api))
+      PCF_ORG: ((pcf-prod-organization))
+      PCF_USER: ((pcf-prod-deploy-username))
+      PCF_PWD: ((pcf-prod-deploy-password))
+      PCF_SPACE: ((pcf-prod-space))
+      PCF_APP_DOMAIN: ((pcf-prod-app-domain))              
 
 - name: upload-users-git-release
   public: true
@@ -397,7 +318,7 @@ jobs:
     - get: git-user
       trigger: true
       passed: 
-      - execute-user-functional-tests
+        - promote-new-version-user
     - get: user-image
   - task: create-user-release-tarball
     image: user-image
