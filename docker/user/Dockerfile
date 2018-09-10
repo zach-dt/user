@@ -33,7 +33,8 @@ ENV MONGO_USER pcf_5952d1577cade7c461b6b6e584920ed0
 ENV MONGO_PASS f016cd07ac42a1ef039aa149ccffe79f
 ENV MONGO_DATABASE default
 # ENV MONGO_URI mongodb://pcf_b2af779aff588970343135159dab5531:0d2a35d25897bfd08a38e675728e482e@10.0.16.50:28000/default?authSource=admin
-ENV MONGO_URI mongodb://user-db-user:user-db4SockShop@user-db-shard-00-00-vvczq.mongodb.net:27017,user-db-shard-00-01-vvczq.mongodb.net:27017,user-db-shard-00-02-vvczq.mongodb.net:27017/test?ssl=true&replicaSet=user-db-shard-0&authSource=admin
+# ENV MONGO_URI mongodb://user-db-user:user-db4SockShop@user-db-shard-00-00-vvczq.mongodb.net:27017,user-db-shard-00-01-vvczq.mongodb.net:27017,user-db-shard-00-02-vvczq.mongodb.net:27017/test?ssl=true&replicaSet=user-db-shard-0&authSource=admin
+ENV MONGO_URI mongodb://user-db-svc:27017
 
 WORKDIR /
 EXPOSE 8080
