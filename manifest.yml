@@ -3,7 +3,7 @@ applications:
 - name: APPNAME
   memory: 512M
   instances: 1
-  buildpack: https://github.com/cloudfoundry/go-buildpack.git
+  buildpack: go_buildpack
   command: user-0.0.2
   env:
     GOVERSION: go1.7
