@@ -3,7 +3,7 @@ applications:
 - name: APPNAME
   memory: 512M
   instances: 1
-  buildpack: go_buildpack_offline
+  buildpack: https://github.com/cloudfoundry/go-buildpack.git
   command: user-0.0.2
   env:
     DT_NODE_ID: APPNAME
