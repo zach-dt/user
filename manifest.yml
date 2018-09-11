@@ -4,6 +4,7 @@ applications:
   memory: 512M
   instances: 1
   buildpack: go_buildpack
+  command: user-0.0.2
   env:
     DT_NODE_ID: APPNAME
     DT_CUSTOM_PROP: DEPLOYMENT_GRP_NME=DTGRP DEPLOYMENT_COLOR=APPCOLOR
