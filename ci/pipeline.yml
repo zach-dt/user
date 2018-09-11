@@ -196,10 +196,10 @@ jobs:
       monspecserviceenvironment: user/Staging
       pipelinetaskname: deploy-user-to-stage
       deployversion: v1.0
-      APP_REPO: git-user 
+      APP_REPO: git-user
   - put: pcf-stage
     params:
-      command: user-release-bucket/user-*
+      path: user-release-bucket/user-*
       manifest: app-manifest-output/manifest.yml  
   
 - name: health-check
