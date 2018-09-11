@@ -9,7 +9,7 @@ groups:
   - execute-user-load-tests
   - validate-user-load-test
   - promote-new-version-user
-  - upload-users-git-release
+#  - upload-users-git-release
 
 - name: init-dynatrace
   jobs: 
@@ -24,31 +24,31 @@ resource_types:
 resources:
 
 #GitHub Release Repository
-- name: user-release
-  type: github-release
-  source:
-    owner: acm-workshop-concourse
-    repository: user
-    access_token: ((github-access-token))
+#- name: user-release
+#  type: github-release
+#  source:
+#    owner: ((workshop-repository))
+#    repository: user
+#    access_token: ((github-access-token))
 
 # GitHub Repositories
 - name: git-pipeline
   type: git
   source:
     branch: master
-    uri: https://github.com/acm-workshop-concourse/sockshop.git
+    uri: https://github.com/((workshop-repository))/sockshop.git
 
 - name: git-jmeter-as-container
   type: git
   source:
     branch: master
-    uri: https://github.com/acm-workshop/jmeter-as-container.git
+    uri: https://github.com/((workshop-repository))/jmeter-as-container.git
 
 - name: git-user
   type: git
   source:
     branch: master
-    uri: https://github.com/acm-workshop-concourse/user.git
+    uri: https://github.com/((workshop-repository))/user.git
 
 - name: dynatrace
   type: dynatrace-resource
@@ -56,12 +56,32 @@ resources:
     apitoken: ((apitoken))
     tenanthost: ((tenanthost))
 
-- name: user-image
-  type: docker-image
+#- name: user-image
+#  type: docker-image
+#  source:
+#    repository: ((docker-hub-username))/user
+#    username: ((docker-hub-username))
+#    password: ((docker-hub-password))
+
+- name: user-release-bucket
+  type: s3
   source:
-    repository: ((docker-hub-username))/user
-    username: ((docker-hub-username))
-    password: ((docker-hub-password))
+    region_name: eu-west-1
+    regexp: user/user-(.*).jar
+    bucket: orders-release-bucket
+    access_key_id: ((s3-access-key-id))
+    secret_access_key: ((s3-secret-access-key))
+
+- name: version
+  type: semver
+  source:
+    driver: s3
+    initial_version: 0.0.1
+    region_name: eu-west-1
+    access_key_id: ((s3-access-key-id))
+    secret_access_key: ((s3-secret-access-key))
+    bucket: orders-release-bucket
+    key: user/version
 
 # PCF Environments
 
@@ -108,29 +128,47 @@ jobs:
   plan:
   - get: git-user
     trigger: true
-  - task: copy-dockerfile
+  - get: version
+    params: { bump: patch }
+  - task: build-user-binary
     config:
       platform: linux
       image_resource:
         type: docker-image
-        source: {repository: busybox}
+        source: {repository: golang, tag: 1.7.1}
       inputs:
       - name: git-user
+      - name: version
       outputs:
-      - name: workspace
+      - name: workplace
       run:
         path: /bin/sh
         args:
         - -exc
         - |
-          output_dir=workspace
-          rm git-user/Dockerfile
-          cp git-user/docker/user/Dockerfile git-user/
-          cp -R git-user/. "${output_dir}/"
-  - put: user-image
-    params:
-      build: workspace
-      cache_tag: latest
+          output_dir=workplace
+          cd workplace
+          export GOPATH=$PWD
+          mkdir -p src/github.com/microservices-demo/user/
+          cp -R ../git-user/* src/github.com/microservices-demo/user/.
+          cd src/github.com/microservices-demo/user/
+          
+          apt-get update
+          apt-get install git
+          go get -v github.com/Masterminds/glide
+          cd $GOPATH/src/github.com/Masterminds/glide
+          make build
+          PATH=$PATH:$GOPATH/src/github.com/Masterminds/glide
+          export PATH
+
+          cd $GOPATH/src/github.com/microservices-demo/user/
+          glide install && CGO_ENABLED=0 go build -a -installsuffix cgo -o ./user main.go
+
+          mv ./user ./user-$(cat version/number)
+          cp ./user "${output_dir}/"
+  - put: user-release-bucket
+    params: 
+      file: workspace/user
 
 - name: deploy-user-to-stage
   serial: true
@@ -309,25 +347,25 @@ jobs:
       PCF_SPACE: ((pcf-prod-space))
       PCF_APP_DOMAIN: ((pcf-prod-app-domain))              
 
-- name: upload-users-git-release
-  public: true
-  plan:
-  - aggregate:
-    - get: git-pipeline
-    - get: git-user
-      trigger: true
-      passed: 
-        - promote-new-version-user
-    - get: user-image
-  - task: create-user-release-tarball
-    image: user-image
-    file: git-pipeline/deploy/cloud-foundry/ci/tasks/prepare-release.yml
-    params:
-      APP_REPO: git-user 
-  - put: user-release
-    params:
-      name: prepared-release/name
-      tag: prepared-release/tag
-    #   body: path/to/body/file
-      globs:
-      - prepared-release/user*.tgz
+#- name: upload-users-git-release
+#  public: true
+#  plan:
+#  - aggregate:
+#    - get: git-pipeline
+#    - get: git-user
+#      trigger: true
+#      passed: 
+#        - promote-new-version-user
+#    - get: user-image
+#  - task: create-user-release-tarball
+#    image: user-image
+#    file: git-pipeline/deploy/cloud-foundry/ci/tasks/prepare-release.yml
+#    params:
+#      APP_REPO: git-user 
+#  - put: user-release
+#    params:
+#      name: prepared-release/name
+#      tag: prepared-release/tag
+#    #   body: path/to/body/file
+#      globs:
+#      - prepared-release/user*.tgz

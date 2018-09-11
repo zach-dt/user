@@ -146,14 +146,4 @@ imports:
   - stats
   - tap
   - transport
-- name: gopkg.in/mgo.v2
-  version: 3f83fa5005286a7fe593b055f0d7771a7dce4655
-  subpackages:
-  - bson
-  - dbtest
-  - internal/json
-  - internal/sasl
-  - internal/scram
-- name: gopkg.in/tomb.v2
-  version: 14b3d72120e8d10ea6e6b7f87f7175734b1faab8
 testImports: []
