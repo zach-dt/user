@@ -7,7 +7,7 @@ applications:
   command: user-0.0.2
   env:
     GOVERSION: go1.7
-    GOPACKAGENAME: example.com/user/app-package-name
+    GOPACKAGENAME: APPNAME
     DT_NODE_ID: APPNAME
     DT_CUSTOM_PROP: DEPLOYMENT_GRP_NME=DTGRP DEPLOYMENT_COLOR=APPCOLOR
     DEPLOYMENT_GRP_NME: DTGRP
