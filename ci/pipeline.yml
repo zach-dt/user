@@ -67,7 +67,7 @@ resources:
   type: s3
   source:
     region_name: eu-west-1
-    regexp: user/user-(.*).jar
+    regexp: user/user-(.*)
     bucket: orders-release-bucket
     access_key_id: ((s3-access-key-id))
     secret_access_key: ((s3-secret-access-key))
@@ -140,14 +140,16 @@ jobs:
       - name: git-user
       - name: version
       outputs:
-      - name: workplace
+      - name: workspace
       run:
         path: /bin/sh
         args:
         - -exc
         - |
-          output_dir=workplace
-          cd workplace
+          output_dir=workspace
+          export WORKDIR=$PWD
+          
+          cd workspace
           export GOPATH=$PWD
           mkdir -p src/github.com/microservices-demo/user/
           cp -R ../git-user/* src/github.com/microservices-demo/user/.
@@ -158,17 +160,17 @@ jobs:
           go get -v github.com/Masterminds/glide
           cd $GOPATH/src/github.com/Masterminds/glide
           make build
-          PATH=$PATH:$GOPATH/src/github.com/Masterminds/glide
-          export PATH
-
+          export PATH=$PATH:$GOPATH/src/github.com/Masterminds/glide
+          
           cd $GOPATH/src/github.com/microservices-demo/user/
-          glide install && CGO_ENABLED=0 go build -a -installsuffix cgo -o ./user main.go
-
-          mv ./user ./user-$(cat version/number)
-          cp ./user "${output_dir}/"
+          glide install && CGO_ENABLED=0 go build -a -installsuffix cgo -o user main.go
+          
+          cd $WORKDIR
+          cp $GOPATH/src/github.com/microservices-demo/user/user "${output_dir}/"
+          mv ${output_dir}/user ${output_dir}/user-$(cat version/number)
   - put: user-release-bucket
     params: 
-      file: workspace/user
+      file: workspace/user-*
 
 - name: deploy-user-to-stage
   serial: true
@@ -176,6 +178,9 @@ jobs:
   plan:
   - get: git-user
     trigger: true
+    passed:
+      - build-user
+  - get: user-release-bucket
     passed:
       - build-user
   - get: git-pipeline
@@ -194,6 +199,7 @@ jobs:
       APP_REPO: git-user 
   - put: pcf-stage
     params:
+      command: user-release-bucket/user-*
       manifest: app-manifest-output/manifest.yml  
   
 - name: health-check
