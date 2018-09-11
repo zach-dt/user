@@ -199,7 +199,7 @@ jobs:
       APP_REPO: git-user
   - put: pcf-stage
     params:
-      path: user-release-bucket/user-*
+      path: user-release-bucket
       manifest: app-manifest-output/manifest.yml  
   
 - name: health-check
