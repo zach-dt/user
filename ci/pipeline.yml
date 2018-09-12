@@ -23,14 +23,6 @@ resource_types:
 
 resources:
 
-#GitHub Release Repository
-#- name: user-release
-#  type: github-release
-#  source:
-#    owner: ((workshop-repository))
-#    repository: user
-#    access_token: ((github-access-token))
-
 # GitHub Repositories
 - name: git-pipeline
   type: git
@@ -68,7 +60,7 @@ resources:
   source:
     region_name: eu-west-1
     regexp: user/user-(.*)
-    bucket: orders-release-bucket
+    bucket: ((s3-bucket))
     access_key_id: ((s3-access-key-id))
     secret_access_key: ((s3-secret-access-key))
 
@@ -78,9 +70,9 @@ resources:
     driver: s3
     initial_version: 0.0.1
     region_name: eu-west-1
+    bucket: ((s3-bucket))
     access_key_id: ((s3-access-key-id))
     secret_access_key: ((s3-secret-access-key))
-    bucket: orders-release-bucket
     key: user/version
 
 # PCF Environments
@@ -114,7 +106,7 @@ jobs:
   plan:
   - aggregate:
     - get: git-pipeline
-    - get: git-user 
+    - get: git-user
   - task: init-dynatrace-task
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/init-dynatrace-task.yml
     params: 
@@ -333,7 +325,9 @@ jobs:
     passed:
       - validate-user-load-test
   - get: git-pipeline
-    trigger: false      
+    trigger: false
+  - get: version
+    params: { bump: patch }     
   - task: get-current-app-color
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/current-app-get-info.yml
     params:
@@ -352,7 +346,9 @@ jobs:
       PCF_USER: ((pcf-prod-deploy-username))
       PCF_PWD: ((pcf-prod-deploy-password))
       PCF_SPACE: ((pcf-prod-space))
-      PCF_APP_DOMAIN: ((pcf-prod-app-domain))              
+      PCF_APP_DOMAIN: ((pcf-prod-app-domain))
+  - put: version
+    params: { file: version/number }             
 
 #- name: upload-users-git-release
 #  public: true
