@@ -96,6 +96,7 @@ func main() {
 		}
 		stdopentracing.InitGlobalTracer(tracer)
 	}
+
 	dbconn := false
 	for !dbconn {
 		err := db.Init()
@@ -110,6 +111,7 @@ func main() {
 	}
 
 	fieldKeys := []string{"method"}
+	
 	// Service domain.
 	var service api.Service
 	{
