@@ -58,11 +58,15 @@ resources:
 - name: user-release-bucket
   type: s3
   source:
-    region_name: eu-west-1
-    regexp: user/user-(.*)
-    bucket: ((s3-bucket))
-    access_key_id: ((s3-access-key-id))
-    secret_access_key: ((s3-secret-access-key))
+#    region_name: eu-west-1
+#    regexp: user/user-(.*)
+#    bucket: ((s3-bucket))
+#    access_key_id: ((s3-access-key-id))
+#    secret_access_key: ((s3-secret-access-key))
+    driver: git
+    uri: https://github.com/((workshop-repository))/user.git
+    branch: master
+    file: version
 
 - name: version
   type: semver
@@ -121,7 +125,7 @@ jobs:
   - get: git-user
     trigger: true
   - get: version
-    params: { bump: patch }
+    params: { pre: rc }
   - task: build-user-binary
     config:
       platform: linux
@@ -345,8 +349,8 @@ jobs:
       PCF_PWD: ((pcf-prod-deploy-password))
       PCF_SPACE: ((pcf-prod-space))
       PCF_APP_DOMAIN: ((pcf-prod-app-domain))
-  - put: version
-    params: { file: version/number }             
+#  - put: version
+#    params: { file: version/number }             
 
 #- name: upload-users-git-release
 #  public: true
