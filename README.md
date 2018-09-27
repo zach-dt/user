@@ -110,4 +110,3 @@ when done you can run:
 ```
 docker-compose -f docker-compose-zipkin.yml down
 ```
-
