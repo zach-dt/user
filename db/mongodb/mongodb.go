@@ -8,7 +8,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/microservices-demo/user/users"
+	"github.com/dynatrace-sockshop/user/users"
 
 	"github.com/globalsign/mgo"
 	"github.com/globalsign/mgo/bson"
