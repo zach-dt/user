@@ -21,6 +21,7 @@ pipeline {
 
           sh 'cp -R ./api src/github.com/dynatrace-sockshop/user/'
           sh 'cp -R ./db src/github.com/dynatrace-sockshop/user/'
+          sh 'cp -R ./users src/github.com/dynatrace-sockshop/user/'
           sh 'cp -R ./main.go src/github.com/dynatrace-sockshop/user/'
           sh 'cp -R ./glide.* src/github.com/dynatrace-sockshop/user/'
           sh 'cd src/github.com/dynatrace-sockshop/user && ls -lsa'
