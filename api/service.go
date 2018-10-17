@@ -10,8 +10,8 @@ import (
 	"io"
 	"time"
 
-	"github.com/microservices-demo/user/db"
-	"github.com/microservices-demo/user/users"
+	"github.com/dynatrace-sockshop/user/db"
+	"github.com/dynatrace-sockshop/user/users"
 )
 
 var (
