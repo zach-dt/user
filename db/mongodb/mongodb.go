@@ -48,6 +48,8 @@ type Mongo struct {
 func (m *Mongo) Init() error {
 	u := getURL()
 	var err error
+	fmt.Print("ignore> ")
+	fmt.Println(u.String())
 	fmt.Print("used> ")
 	fmt.Println(uri)
 
