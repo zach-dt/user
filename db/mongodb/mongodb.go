@@ -48,12 +48,11 @@ type Mongo struct {
 func (m *Mongo) Init() error {
 	u := getURL()
 	var err error
-	fmt.Print("ignore> ")
+	fmt.Print("ignore > ")
 	fmt.Println(u.String())
-	fmt.Print("used> ")
+	fmt.Print("use > ")
 	fmt.Println(uri)
 
-	
 	tlsConfig := &tls.Config{}
 
 	dialInfo := &mgo.DialInfo{
