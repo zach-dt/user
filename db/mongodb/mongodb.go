@@ -15,8 +15,8 @@ import (
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
 
-    "crypto/tls"
-    "net"	
+    //"crypto/tls"
+    //"net"	
 )
 
 var (
@@ -48,28 +48,36 @@ type Mongo struct {
 func (m *Mongo) Init() error {
 	u := getURL()
 	var err error
-	fmt.Print("ignore > ")
+	fmt.Print("ignore> ")
 	fmt.Println(u.String())
-	fmt.Print("use > ")
+	fmt.Print("used> ")
 	fmt.Println(uri)
 
+	/*
 	tlsConfig := &tls.Config{}
-
 	dialInfo := &mgo.DialInfo{
-		Addrs: []string{"user-db-shard-00-00-vvczq.mongodb.net:27017"},
+		Addrs: []string{"user-db-shard-00-00-vvczq.mongodb.net:27017", 
+						"user-db-shard-00-01-vvczq.mongodb.net:27017",
+						"user-db-shard-00-02-vvczq.mongodb.net:27017"},
 		Timeout:  60 * time.Second,
     	Database: "test",
     	Username: "user-db-user",
     	Password: "user-db4SockShop",
 	}
-
 	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
 		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+		if err != nil {
+			fmt.Print("error log: ")
+			fmt.Println(err)
+		} else {
+			fmt.Println("ok")
+		}
     	return conn, err
 	}
-
 	m.Session, err = mgo.DialWithInfo(dialInfo)
-	
+	*/
+
+	m.Session, err = mgo.DialWithTimeout(uri, time.Duration(5)*time.Second)
 	if err != nil {
 		return err
 	}
