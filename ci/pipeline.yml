@@ -291,7 +291,7 @@ jobs:
       APP_REPO: git-jmeter-as-container
       FUNC_VALIDATION: yes
       PRODUCTION: true
-      SCRIPT_NAME: user_basic.jmx
+      SCRIPT_NAME: user_load.jmx
       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
       PCF_APP_DOMAIN: ((pcf-prod-app-domain))
       DT_LTN: LoadTest
