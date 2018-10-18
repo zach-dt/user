@@ -23,7 +23,6 @@ var (
 	name     string
 	password string
 	host     string
-	// db       = "users"
 	db       string
 	uri      string
 	//ErrInvalidHexID represents a entity id that is not a valid bson ObjectID
@@ -35,6 +34,7 @@ func init() {
 	flag.StringVar(&password, "mongo-password", os.Getenv("MONGO_PASS"), "Mongo password")
 	flag.StringVar(&host, "mongo-host", os.Getenv("MONGO_HOST"), "Mongo host")
 	flag.StringVar(&db, "mongo-database", os.Getenv("MONGO_DATABASE"), "Mongo database")
+
 	flag.StringVar(&uri, "mongo-uri", os.Getenv("MONGO_URI"), "Mongo uri")
 }
 
@@ -58,7 +58,7 @@ func (m *Mongo) Init() error {
 	dialInfo := &mgo.DialInfo{
 		Addrs: []string{"user-db-shard-00-00-vvczq.mongodb.net:27017"},
 		Timeout:  60 * time.Second,
-    	Database: "admin",
+    	Database: "test",
     	Username: "user-db-user",
     	Password: "user-db4SockShop",
 	}
