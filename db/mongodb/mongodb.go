@@ -50,7 +50,7 @@ func (m *Mongo) Init() error {
 	var err error
 	fmt.Print("ignore> ")
 	fmt.Println(u.String())
-	fmt.Print("used> ")
+	fmt.Print("use> ")
 	fmt.Println(uri)
 
 	/*
