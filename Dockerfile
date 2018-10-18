@@ -1,52 +1,41 @@
-FROM golang:1.7
+FROM ubuntu:16.04
 
-ENV sourcesdir /go/src/github.com/microservices-demo/user/
+ENV    SERVICE_USER=myuser \
+    SERVICE_UID=10001 \
+    SERVICE_GROUP=mygroup \
+    SERVICE_GID=10001
 
-ENV MONGO_HOST mytestdb:27017
+RUN addgroup --gid ${SERVICE_GID} ${SERVICE_GROUP} && adduser --ingroup ${SERVICE_GROUP} --shell /sbin/nologin --uid ${SERVICE_UID} ${SERVICE_USER}
+
+WORKDIR /
+COPY ./user /user
+
+RUN	chmod +x /user && \
+	chown -R ${SERVICE_USER}:${SERVICE_GROUP} /user && \
+	setcap 'cap_net_bind_service=+ep' /user
+
 ENV HATEAOS user
 ENV USER_DATABASE mongodb
+ENV MONGO_DATABASE default
+ENV MONGO_URI mongodb://user-db-user:user-db4SockShop@user-db-shard-00-00-vvczq.mongodb.net:27017,user-db-shard-00-01-vvczq.mongodb.net:27017,user-db-shard-00-02-vvczq.mongodb.net:27017/test?ssl=true&replicaSet=user-db-shard-0&authSource=admin
+# ENV MONGO_URI mongodb://user-db-svc:27017
+ENV APP_PORT 8080
 
-COPY . ${sourcesdir}
+USER ${SERVICE_USER}
 
-# Install GO
-RUN go get -v github.com/Masterminds/glide && cd ${sourcesdir} && glide install && go install
+ARG BUILD_DATE
+ARG BUILD_VERSION
+ARG COMMIT
 
-# Install Java 7 for jMeter 3.0
-ENV LANG C.UTF-8
+LABEL org.label-schema.vendor="Dynatrace" \
+  org.label-schema.build-date="${BUILD_DATE}" \
+  org.label-schema.version="${BUILD_VERSION}" \
+  org.label-schema.name="Socksshop: User" \
+  org.label-schema.description="REST API for User service" \
+  org.label-schema.url="https://github.com/dynatrace-sockshop/user" \
+  org.label-schema.vcs-url="github.com:dynatrace-sockshop/user.git" \
+  org.label-schema.vcs-ref="${COMMIT}" \
+  org.label-schema.schema-version="1.0"
 
-RUN { \
-	echo '#!/bin/sh'; \
-	echo 'set -e'; \
-	echo; \
-	echo 'dirname "$(dirname "$(readlink -f "$(which javac || which java)")")"'; \
-    } > /usr/local/bin/docker-java-home \
-    && chmod +x /usr/local/bin/docker-java-home
-
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64/jre
-
-ENV JAVA_VERSION 7u181
-ENV JAVA_DEBIAN_VERSION 7u181-2.6.14-1~deb8u1
-
-RUN set -x \
-    && apt-get update \
-    && apt-get install -y \
-	openjdk-7-jre-headless="$JAVA_DEBIAN_VERSION" \
-    && rm -rf /var/lib/apt/lists/* \
-    && [ "$JAVA_HOME" = "$(docker-java-home)" ]
-
-RUN echo $JAVA_HOME
-RUN java -version
-
-# Install JMeter
-RUN wget https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-3.0.tgz
-RUN tar -xvzf apache-jmeter-3.0.tgz
-RUN rm apache-jmeter-3.0.tgz
-
-RUN mv apache-jmeter-3.0 /jmeter
-
-ENV JMETER_HOME /jmeter
-
-ENV PATH $JMETER_HOME/bin:$PATH
-
-# Set Working DIR
-WORKDIR ${sourcesdir}
+CMD ["/user", "-port=8080"]
+EXPOSE 8080

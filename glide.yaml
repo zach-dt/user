@@ -1,4 +1,4 @@
-package: github.com/microservices-demo/user
+package: github.com/dynatrace-sockshop/user
 import:
 - package: github.com/go-kit/kit
   version: v0.4.0
@@ -18,6 +18,9 @@ import:
   - prometheus
   - prometheus/promhttp
 - package: github.com/globalsign/mgo
+  subpackages:
+  - bson
+- package: gopkg.in/mgo.v2
   subpackages:
   - bson
 - package: github.com/afex/hystrix-go

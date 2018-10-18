@@ -5,7 +5,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/microservices-demo/user/users"
+	"github.com/dynatrace-sockshop/user/users"
 )
 
 var (
