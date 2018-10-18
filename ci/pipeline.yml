@@ -155,9 +155,9 @@ jobs:
           
           cd workspace
           export GOPATH=$PWD
-          mkdir -p src/github.com/microservices-demo/user/
-          cp -R ../git-user/* src/github.com/microservices-demo/user/.
-          cd src/github.com/microservices-demo/user/
+          mkdir -p src/github.com/dynatrace-sockshop/user/
+          cp -R ../git-user/* src/github.com/dynatrace-sockshop/user/.
+          cd src/github.com/dynatrace-sockshop/user/
           
           apt-get update
           apt-get install git
@@ -166,11 +166,11 @@ jobs:
           make build
           export PATH=$PATH:$GOPATH/src/github.com/Masterminds/glide
           
-          cd $GOPATH/src/github.com/microservices-demo/user/
+          cd $GOPATH/src/github.com/dynatrace-sockshop/user/
           glide install && CGO_ENABLED=0 go build -a -installsuffix cgo -o user main.go
           
           cd $WORKDIR
-          cp $GOPATH/src/github.com/microservices-demo/user/user "${output_dir}/"
+          cp $GOPATH/src/github.com/dynatrace-sockshop/user/user "${output_dir}/"
           mv ${output_dir}/user ${output_dir}/user-$(cat version/number)
   - put: user-release-bucket
     params: 

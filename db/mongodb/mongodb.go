@@ -58,7 +58,7 @@ func (m *Mongo) Init() error {
 	dialInfo := &mgo.DialInfo{
 		Addrs: []string{"user-db-shard-00-00-vvczq.mongodb.net:27017"},
 		Timeout:  60 * time.Second,
-    	Database: "admin",
+    	Database: "test",
     	Username: "user-db-user",
     	Password: "user-db4SockShop",
 	}
