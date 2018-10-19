@@ -16,11 +16,15 @@ pipeline {
       steps {
         checkout scm
         container('golang') {
-          sh 'go version && glide -v'
-          sh 'mkdir -p src/github.com/dynatrace-sockshop/user/'
+          sh '''
+             go version && glide -v
+             mkdir -p src/github.com/dynatrace-sockshop/user/
 
-          sh 'cp -R ./api src/github.com/dynatrace-sockshop/user/'
-          sh 'cp -R ./db src/github.com/dynatrace-sockshop/user/'
+             cp -R ./api src/github.com/dynatrace-sockshop/user/
+             cp -R ./db src/github.com/dynatrace-sockshop/user/
+          '''
+          //sh 'cp -R ./api src/github.com/dynatrace-sockshop/user/'
+          //sh 'cp -R ./db src/github.com/dynatrace-sockshop/user/'
           sh 'cp -R ./users src/github.com/dynatrace-sockshop/user/'
           sh 'cp -R ./main.go src/github.com/dynatrace-sockshop/user/'
           sh 'cp -R ./glide.* src/github.com/dynatrace-sockshop/user/'
@@ -122,6 +126,7 @@ pipeline {
       steps {
         container('docker'){
           sh "docker tag ${env.TAG_DEV} ${env.TAG_STAGING}"
+          sh "docker push ${env.TAG_STAGING}"
         }
       }
     }
