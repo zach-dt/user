@@ -9,7 +9,7 @@ groups:
   - execute-user-load-tests
   - validate-user-load-test
   - promote-new-version-user
-#  - upload-users-git-release
+  - upload-user-git-release
 
 - name: init-dynatrace
   jobs: 
@@ -22,6 +22,14 @@ resource_types:
     repository: mvilliger/dynatrace-resource
 
 resources:
+
+#GitHub Release Repository
+- name: user-release
+  type: github-release
+  source:
+    owner: acm-workshop-concourse
+    repository: user
+    access_token: ((github-access-token))
 
 # GitHub Repositories
 - name: git-pipeline
@@ -125,7 +133,7 @@ jobs:
   - get: git-user
     trigger: true
   - get: version
-    params: { pre: rc }
+    params: { pre: build }
   - task: build-user-binary
     config:
       platform: linux
@@ -147,9 +155,9 @@ jobs:
           
           cd workspace
           export GOPATH=$PWD
-          mkdir -p src/github.com/microservices-demo/user/
-          cp -R ../git-user/* src/github.com/microservices-demo/user/.
-          cd src/github.com/microservices-demo/user/
+          mkdir -p src/github.com/dynatrace-sockshop/user/
+          cp -R ../git-user/* src/github.com/dynatrace-sockshop/user/.
+          cd src/github.com/dynatrace-sockshop/user/
           
           apt-get update
           apt-get install git
@@ -158,11 +166,11 @@ jobs:
           make build
           export PATH=$PATH:$GOPATH/src/github.com/Masterminds/glide
           
-          cd $GOPATH/src/github.com/microservices-demo/user/
+          cd $GOPATH/src/github.com/dynatrace-sockshop/user/
           glide install && CGO_ENABLED=0 go build -a -installsuffix cgo -o user main.go
           
           cd $WORKDIR
-          cp $GOPATH/src/github.com/microservices-demo/user/user "${output_dir}/"
+          cp $GOPATH/src/github.com/dynatrace-sockshop/user/user "${output_dir}/"
           mv ${output_dir}/user ${output_dir}/user-$(cat version/number)
   - put: user-release-bucket
     params: 
@@ -208,7 +216,7 @@ jobs:
         - deploy-user-to-stage
     - get: git-jmeter-as-container
     - get: git-pipeline
-  - task: run-load-tests
+  - task: run-health-check
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/health-test.yml
     params:
       APP_REPO: git-jmeter-as-container
@@ -283,7 +291,7 @@ jobs:
       APP_REPO: git-jmeter-as-container
       FUNC_VALIDATION: yes
       PRODUCTION: true
-      SCRIPT_NAME: user_basic.jmx
+      SCRIPT_NAME: user_load.jmx
       PCF_APP_SUFFIX: ((pcf-prod-user-suffix))
       PCF_APP_DOMAIN: ((pcf-prod-app-domain))
       DT_LTN: LoadTest
@@ -331,7 +339,7 @@ jobs:
   - get: git-user
     trigger: true
     passed:
-      - validate-user-load-test
+      - execute-user-load-tests
   - get: git-pipeline
     trigger: false
   - get: version
@@ -355,28 +363,28 @@ jobs:
       PCF_PWD: ((pcf-prod-deploy-password))
       PCF_SPACE: ((pcf-prod-space))
       PCF_APP_DOMAIN: ((pcf-prod-app-domain))
-#  - put: version
-#    params: { file: version/number }             
 
-#- name: upload-users-git-release
-#  public: true
-#  plan:
-#  - aggregate:
-#    - get: git-pipeline
-#    - get: git-user
-#      trigger: true
-#      passed: 
-#        - promote-new-version-user
-#    - get: user-image
-#  - task: create-user-release-tarball
-#    image: user-image
-#    file: git-pipeline/deploy/cloud-foundry/ci/tasks/prepare-release.yml
-#    params:
-#      APP_REPO: git-user 
-#  - put: user-release
-#    params:
-#      name: prepared-release/name
-#      tag: prepared-release/tag
-#    #   body: path/to/body/file
-#      globs:
-#      - prepared-release/user*.tgz
+- name: upload-user-git-release
+  public: true
+  plan:
+  - aggregate:
+    - get: git-user
+      trigger: true
+      passed: 
+        - promote-new-version-user
+    - get: user-release-bucket
+    - get: git-pipeline
+    - get: version
+      params: { pre: build }
+  - task: create-user-release-info
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/prepare-release.yml
+    params:
+      APP_NAME: user
+  - put: user-release
+    params:
+      name: prepared-release/name
+      tag: prepared-release/tag
+      globs:
+      - user-release-bucket/user-*
+#  - put: version
+#    params: { file: version/number }    
