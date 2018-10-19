@@ -17,19 +17,18 @@ pipeline {
         checkout scm
         container('golang') {
           sh '''
-             go version && glide -v
-             mkdir -p src/github.com/dynatrace-sockshop/user/
+            export GOPATH=$PWD
 
-             cp -R ./api src/github.com/dynatrace-sockshop/user/
-             cp -R ./db src/github.com/dynatrace-sockshop/user/
-             cp -R ./users src/github.com/dynatrace-sockshop/user/
-             cp -R ./main.go src/github.com/dynatrace-sockshop/user/
-             cp -R ./glide.* src/github.com/dynatrace-sockshop/user/
-             cd src/github.com/dynatrace-sockshop/user && ls -lsa
+            mkdir -p src/github.com/dynatrace-sockshop/user/
+            cp -R ./api src/github.com/dynatrace-sockshop/user/
+            cp -R ./db src/github.com/dynatrace-sockshop/user/
+            cp -R ./users src/github.com/dynatrace-sockshop/user/
+            cp -R ./main.go src/github.com/dynatrace-sockshop/user/
+            cp -R ./glide.* src/github.com/dynatrace-sockshop/user/
+            cd src/github.com/dynatrace-sockshop/user && ls -lsa
 
-             export GOPATH=$PWD
-             glide install
-             go build -a -ldflags -linkmode=external -installsuffix cgo -o $GOPATH/user main.go
+            glide install
+            go build -a -ldflags -linkmode=external -installsuffix cgo -o $GOPATH/user main.go
           '''
         }
       }
