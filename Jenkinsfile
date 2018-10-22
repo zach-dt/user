@@ -19,6 +19,8 @@ pipeline {
           sh '''
             export GOPATH=$PWD
 
+            go version
+
             mkdir -p src/github.com/dynatrace-sockshop/user/
             cp -R ./api src/github.com/dynatrace-sockshop/user/
             cp -R ./db src/github.com/dynatrace-sockshop/user/
