@@ -1,6 +1,6 @@
 pipeline {
   agent {
-    label 'golang'
+    label 'golang2'
   }
   environment {
     APP_NAME = "user"
@@ -15,7 +15,7 @@ pipeline {
     stage('Go build') {
       steps {
         checkout scm
-        container('golang') {
+        container('gobuilder') {
           sh '''
             export GOPATH=$PWD
 
