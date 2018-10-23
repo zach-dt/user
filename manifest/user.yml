@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: user
-        image: 10.31.240.247:5000/library/sockshop/user:dev
+        image: to-be-replaced-by-jenkins
         resources:
           limits:
             cpu: 500m
