@@ -138,17 +138,13 @@ pipeline {
           return env.BRANCH_NAME ==~ 'release/.*'
         }
       }
-      agent {
-        label 'git'
-      }
       steps {
-        withCredentials([usernamePassword(credentialsId: 'git-credentials-acm', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-            sh "git config --global user.email ${env.GIT_USER_EMAIL}"
-            sh "git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/dynatrace-sockshop/k8s-deploy-staging"
-            sh "cd k8s-deploy-staging/ && sed -i 's#image: .*#image: ${env.TAG_STAGING}#' user.yml"
-            sh "cd k8s-deploy-staging/ && git add user.yml && git commit -m 'Update user version ${env.VERSION}'"
-            sh 'cd k8s-deploy-staging/ && git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/dynatrace-sockshop/k8s-deploy-staging'
-        }
+        build job: "k8s-deploy-staging",
+          parameters: [
+            string(name: 'APP_NAME', value: "${env.APP_NAME}"),
+            string(name: 'TAG_STAGING', value: "${env.TAG_STAGING}"),
+            string(name: 'VERSION', value: "${env.VERSION}")
+          ]
       }
     }
   }
