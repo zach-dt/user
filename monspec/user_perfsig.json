@@ -3,22 +3,22 @@
         {
             "timeseriesId" : "com.dynatrace.builtin:service.responsetime",
             "aggregation" : "avg",
-            "tags" : "app:user,environment:staging"
+            "tags" : "app:user,environment:dev"
         },
         {
             "timeseriesId" : "com.dynatrace.builtin:service.responsetime",
             "aggregation" : "percentile",
-            "tags" : "app:user,environment:staging"
+            "tags" : "app:user,environment:dev"
         },
         {
             "timeseriesId" : "com.dynatrace.builtin:service.server_side_requests",
             "aggregation" : "count",
-            "tags" : "app:user,environment:staging"
+            "tags" : "app:user,environment:dev"
         },
         {
             "timeseriesId" : "com.dynatrace.builtin:service.serversidefailurerate",
             "aggregation" : "avg",
-            "tags" : "app:user,environment:staging"
+            "tags" : "app:user,environment:dev"
         }
     ]
 }
