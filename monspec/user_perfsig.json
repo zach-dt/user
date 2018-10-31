@@ -3,22 +3,25 @@
         {
             "timeseriesId" : "com.dynatrace.builtin:service.responsetime",
             "aggregation" : "avg",
-            "tags" : "app:user,environment:dev"
+            "tags" : "app:user,environment:dev",
+            "upperBound" : 1000
         },
         {
             "timeseriesId" : "com.dynatrace.builtin:service.responsetime",
             "aggregation" : "percentile",
-            "tags" : "app:user,environment:dev"
+            "tags" : "app:user,environment:dev",
+            "upperBound" : 1000
         },
         {
-            "timeseriesId" : "com.dynatrace.builtin:service.server_side_requests",
+            "timeseriesId" : "com.dynatrace.builtin:service.requests",
             "aggregation" : "count",
             "tags" : "app:user,environment:dev"
         },
         {
-            "timeseriesId" : "com.dynatrace.builtin:service.serversidefailurerate",
+            "timeseriesId" : "com.dynatrace.builtin:service.failurerate",
             "aggregation" : "avg",
-            "tags" : "app:user,environment:dev"
+            "tags" : "app:user,environment:dev",
+            "upperBound" : 0
         }
     ]
 }
