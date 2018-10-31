@@ -38,7 +38,7 @@ pipeline {
                 checkPath: '/health',
                 vuCount: 10,
                 loopCount: 250,
-                thinkTime: 10,
+                thinkTime: 500,
                 LTN: "PerfCheck_${BUILD_NUMBER}",
                 funcValidation: false,
                 avgRtValidation: 250
