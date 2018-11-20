@@ -17,11 +17,11 @@ groups:
   jobs: 
   - init-dynatrace-user
 
-# resource_types:
-# - name: dynatrace-resource
-#   type: docker-image
-#   source:
-#     repository: mvilliger/dynatrace-resource
+resource_types:
+- name: dynatrace-resource
+  type: docker-image
+  source:
+    repository: mvilliger/dynatrace-resource
 
 resources:
 
@@ -46,11 +46,11 @@ resources:
     branch: master
     uri: https://github.com/((workshop-repository))/user.git
 
-# - name: dynatrace
-#   type: dynatrace-resource
-#   source:
-#     apitoken: ((apitoken))
-#     tenanthost: ((tenanthost))
+- name: dynatrace
+  type: dynatrace-resource
+  source:
+    apitoken: ((dt_api_token))
+    tenanthost: ((dt_tenant_url))
 
 #- name: user-image
 #  type: docker-image
@@ -191,11 +191,12 @@ jobs:
   - task: prepare-app-manifest
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/app-manifest-prep.yml
     params:
+      STAGE: Dev
       PCF_APP_SUFFIX: ((pcf-dev-user-suffix)) 
       APP_REPO: git-user           
   # - put: dynatrace
   #   params:
-  #     monspecserviceenvironment: user/dev
+  #     monspecserviceenvironment: user/Dev
   #     pipelinetaskname: deploy-to-dev
   #     deployversion: v1.0
   #     APP_REPO: git-user
@@ -276,12 +277,13 @@ jobs:
   - task: prepare-app-manifest
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/app-manifest-prep.yml
     params:
+      STAGE: Staging
       PCF_APP_SUFFIX: ((pcf-staging-user-suffix)) 
       APP_REPO: git-user               
   # - put: dynatrace
   #   params:
-  #     monspecserviceenvironment: user/Production
-  #     pipelinetaskname: deploy-to-prod
+  #     monspecserviceenvironment: user/Staging
+  #     pipelinetaskname: deploy-to-staging
   #     deployversion: v1.0 
   #     APP_REPO: git-user 
   - put: pcf-staging
@@ -371,13 +373,13 @@ jobs:
   - task: prepare-app-manifest
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/app-manifest-prep.yml
     params:
+      STAGE: Production
       PCF_APP_SUFFIX: ((pcf-production-user-suffix)) 
-      APP_REPO: git-user
-      PRODUCTION: true                 
+      APP_REPO: git-user                
   # - put: dynatrace
   #   params:
   #     monspecserviceenvironment: user/Production
-  #     pipelinetaskname: deploy-user-to-prod
+  #     pipelinetaskname: deploy-to-production
   #     deployversion: v1.0 
   #     APP_REPO: git-user 
   - put: pcf-production
