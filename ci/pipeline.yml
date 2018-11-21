@@ -55,7 +55,7 @@ resources:
   type: dynatrace-resource
   source:
     apitoken: ((dt_api_token))
-    tenanthost: ((dt_tenant_url))
+    tenanthost: ((dt_tenant_host))
 
 #- name: user-image
 #  type: docker-image
@@ -127,7 +127,7 @@ jobs:
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/init-dynatrace-task.yml
     params: 
       apitoken: ((dt_api_token))
-      tenanthost: ((dt_tenant_url))
+      tenanthost: ((dt_tenant_host))
       APP_REPO: git-user
 
 # USER
@@ -323,7 +323,7 @@ jobs:
 #     params: 
 #       monspecserviceenvironment: user/Production-$NEXT_APP_COLOR
 #       apitoken: ((dt_api_token))
-#       tenanthost: ((dt_tenant_url))
+#       tenanthost: ((dt_tenant_host))
 #       APP_REPO: git-user 
 
 # - name: validate-user-load-test
@@ -350,7 +350,7 @@ jobs:
 #     params: 
 #       monspeccomparison: user/Production-$NEXT_APP_COLOR\ToProduction-$CURRENT_APP_COLOR\Last5m
 #       apitoken: ((dt_api_token))
-#       tenanthost: ((dt_tenant_url))
+#       tenanthost: ((dt_tenant_host))
 #       APP_REPO: git-user     
 
 - name: deploy-to-production
@@ -466,7 +466,7 @@ jobs:
       PCF_APP_DOMAIN: ((pcf-dev-app-domain))
       SERVER_PORT: 80
       VU_COUNT: 10
-      LOOP_COUNT: 25 #250
+      LOOP_COUNT: 250
       DT_LTN: FuncCheck
       FUNC_VALIDATION: false
       AVG_RT_VALIDATION: 3000
@@ -476,7 +476,7 @@ jobs:
     params: 
       monspecserviceenvironment: user/Dev
       apitoken: ((dt_api_token))
-      tenanthost: ((dt_tenant_url))
+      tenanthost: ((dt_tenant_host))
       APP_REPO: git-user 
 
 - name: validate-performance-check
@@ -494,5 +494,5 @@ jobs:
     params: 
       monspeccomparison: user/DevToDevLastHour
       apitoken: ((dt_api_token))
-      tenanthost: ((dt_tenant_url))
+      tenanthost: ((dt_tenant_host))
       APP_REPO: git-user 
