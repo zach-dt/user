@@ -17,6 +17,11 @@ groups:
   jobs: 
   - init-dynatrace-user
 
+- name: performance
+  jobs:
+  - run-performance-check
+  - validate-performance-check
+
 resource_types:
 - name: dynatrace-resource
   type: docker-image
@@ -121,8 +126,8 @@ jobs:
   - task: init-dynatrace-task
     file: git-pipeline/deploy/cloud-foundry/ci/tasks/init-dynatrace-task.yml
     params: 
-      apitoken: ((apitoken))
-      tenanthost: ((tenanthost))
+      apitoken: ((dt_api_token))
+      tenanthost: ((dt_tenant_url))
       APP_REPO: git-user
 
 # USER
@@ -194,17 +199,17 @@ jobs:
       STAGE: Dev
       PCF_APP_SUFFIX: ((pcf-dev-user-suffix)) 
       APP_REPO: git-user           
-  # - put: dynatrace
-  #   params:
-  #     monspecserviceenvironment: user/Dev
-  #     pipelinetaskname: deploy-to-dev
-  #     deployversion: v1.0
-  #     APP_REPO: git-user
   - put: pcf-dev
     params:
       path: git-user
       manifest: app-manifest-output/manifest.yml
-  
+  - put: dynatrace
+    params:
+      monspecserviceenvironment: user/Dev
+      pipelinetaskname: deploy-to-dev
+      deployversion: v1.0
+      APP_REPO: git-user
+      
 - name: run-health-check
   serial: true
   public: true
@@ -280,16 +285,16 @@ jobs:
       STAGE: Staging
       PCF_APP_SUFFIX: ((pcf-staging-user-suffix)) 
       APP_REPO: git-user               
-  # - put: dynatrace
-  #   params:
-  #     monspecserviceenvironment: user/Staging
-  #     pipelinetaskname: deploy-to-staging
-  #     deployversion: v1.0 
-  #     APP_REPO: git-user 
   - put: pcf-staging
     params:
       path: git-user
       manifest: app-manifest-output/manifest.yml 
+  - put: dynatrace
+    params:
+      monspecserviceenvironment: user/Staging
+      pipelinetaskname: deploy-to-staging
+      deployversion: v1.0 
+      APP_REPO: git-user 
 
 # - name: run-e2e-test
 #   serial: true
@@ -317,8 +322,8 @@ jobs:
 #     file: git-pipeline/deploy/cloud-foundry/ci/tasks/push-dynatrace-monspec-data.yml
 #     params: 
 #       monspecserviceenvironment: user/Production-$NEXT_APP_COLOR
-#       apitoken: ((apitoken))
-#       tenanthost: ((tenanthost))
+#       apitoken: ((dt_api_token))
+#       tenanthost: ((dt_tenant_url))
 #       APP_REPO: git-user 
 
 # - name: validate-user-load-test
@@ -344,8 +349,8 @@ jobs:
 #     file: git-pipeline/deploy/cloud-foundry/ci/tasks/validate-via-monspec.yml
 #     params: 
 #       monspeccomparison: user/Production-$NEXT_APP_COLOR\ToProduction-$CURRENT_APP_COLOR\Last5m
-#       apitoken: ((apitoken))
-#       tenanthost: ((tenanthost))
+#       apitoken: ((dt_api_token))
+#       tenanthost: ((dt_tenant_url))
 #       APP_REPO: git-user     
 
 - name: deploy-to-production
@@ -376,16 +381,16 @@ jobs:
       STAGE: Production
       PCF_APP_SUFFIX: ((pcf-production-user-suffix)) 
       APP_REPO: git-user                
-  # - put: dynatrace
-  #   params:
-  #     monspecserviceenvironment: user/Production
-  #     pipelinetaskname: deploy-to-production
-  #     deployversion: v1.0 
-  #     APP_REPO: git-user 
   - put: pcf-production
     params:
       path: git-user
       manifest: app-manifest-output/manifest.yml
+  - put: dynatrace
+    params:
+      monspecserviceenvironment: user/Production
+      pipelinetaskname: deploy-to-production
+      deployversion: v1.0 
+      APP_REPO: git-user
 
 - name: promote-new-version
   serial: true
@@ -441,3 +446,53 @@ jobs:
 #       - user-release-bucket/user-*
 #  - put: version
 #    params: { file: version/number }    
+
+- name: run-performance-check
+  serial: true
+  public: true
+  plan:
+  - aggregate:
+    - get: git-user
+      trigger: false
+    - get: git-pipeline
+  - task: run-performance-check
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/jmeter-test.yml
+    params:
+      APP_REPO: git-user
+      PRODUCTION: false
+      SCRIPT_NAME: jmeter/user_load.jmx
+      RESULT_DIR: PerfCheck
+      PCF_APP_SUFFIX: ((pcf-dev-user-suffix))
+      PCF_APP_DOMAIN: ((pcf-dev-app-domain))
+      SERVER_PORT: 80
+      VU_COUNT: 10
+      LOOP_COUNT: 25 #250
+      DT_LTN: FuncCheck
+      FUNC_VALIDATION: false
+      AVG_RT_VALIDATION: 3000
+      THINK_TIME: 0
+  - task: push-dynatrace-monspec-data
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/push-dynatrace-monspec-data.yml
+    params: 
+      monspecserviceenvironment: user/Dev
+      apitoken: ((dt_api_token))
+      tenanthost: ((dt_tenant_url))
+      APP_REPO: git-user 
+
+- name: validate-performance-check
+  serial: true
+  public: true
+  plan:
+  - get: git-user
+    trigger: true
+    passed:
+      - run-performance-check
+  - get: git-pipeline
+    trigger: false      
+  - task: validate-via-monspec
+    file: git-pipeline/deploy/cloud-foundry/ci/tasks/validate-via-monspec.yml
+    params: 
+      monspeccomparison: user/DevToDevLastHour
+      apitoken: ((dt_api_token))
+      tenanthost: ((dt_tenant_url))
+      APP_REPO: git-user 
