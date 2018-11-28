@@ -1,7 +1,7 @@
 ---
 applications:
 - name: APPNAME
-  memory: 512M
+  memory: 64M
   instances: 1
   buildpack: https://github.com/cloudfoundry/go-buildpack.git
   env:
@@ -9,8 +9,5 @@ applications:
     APP_PORT: 8080
     USER_DATABASE: mongodb
     MONGO_URI: mongodb://user-db-user:user-db4SockShop@user-db-shard-00-00-vvczq.mongodb.net:27017,user-db-shard-00-01-vvczq.mongodb.net:27017,user-db-shard-00-02-vvczq.mongodb.net:27017/test?ssl=true&replicaSet=user-db-shard-0&authSource=admin
-    DT_NODE_ID: APPNAME
-    DT_CUSTOM_PROP: DEPLOYMENT_GRP_NME=DTGRP DEPLOYMENT_COLOR=APPCOLOR
-    DEPLOYMENT_GRP_NME: DTGRP
-    DUMMY_VAR: changethisagain2
+    DT_CUSTOM_PROP: DEPLOYMENT_GRP_NME=DTGRP DEPLOYMENT_APP_NME=NODEID DEPLOYMENT_COLOR=APPCOLOR
     
