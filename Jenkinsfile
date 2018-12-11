@@ -1,16 +1,16 @@
 @Library('dynatrace@master') _
 
-def tagMatchRules = [
-  [
-    meTypes : [ "SERVICE"],
-    tags : [
-      [context: "CONTEXTLESS", key: "enviornment", value: "dev"],
-      [context: "CONTEXTLESS", key: "app", value: "user"],
-    ]
-  ]
-]
+// def tagMatchRules = [
+//   [
+//     meTypes : [ "SERVICE"],
+//     tags : [
+//       [context: "CONTEXTLESS", key: "enviornment", value: "dev"],
+//       [context: "CONTEXTLESS", key: "app", value: "user"]
+//     ]
+//   ]
+// ]
 
-//def tagMatchRules = "[{ \"meTypes\" : [\"SERVICE\"], \"tags\" : [ { \"context\" : \"CONTEXTLESS\", \"key\" : \"app\", \"value\" : \"user\" }, { \"context\" : \"CONTEXTLESS\", \"key\" : \"environment\", \"value\" : \"dev\" } ] }]"
+def tagMatchRules = "[{ \"meTypes\" : [\"SERVICE\"], \"tags\" : [ { \"context\" : \"CONTEXTLESS\", \"key\" : \"app\", \"value\" : \"user\" }, { \"context\" : \"CONTEXTLESS\", \"key\" : \"environment\", \"value\" : \"dev\" } ] }]"
 
 pipeline {
   agent {
@@ -98,12 +98,7 @@ pipeline {
             
             script {
               def status = pushDynatraceDeploymentEvent (
-                //dtTenantUrl : "${DT_TENANT_URL}",
-                //dtApiToken : "${DT_API_TOKEN}",
                 tagRule : tagMatchRules
-                //deploymentName : ${env.JOB_NAME}, // default to env.JOB_NAME
-                //annotations : "\\\"deploymentName\\\":\\\"${env.JOB_NAME}\\\", \\\"deploymentVersion\\\":\\\"${env.VERSION}\\\", \\\"deploymentProject\\\":\\\"\\\", \\\"ciBackLink\\\":\\\"${env.BUILD_URL}\\\", \\\"source\\\":\\\"Jenkins\\\"",
-                //customProperties : "\\\"Jenkins Build Number\\\": \\\"${env.BUILD_ID}\\\",  \\\"Git commit\\\": \\\"${env.GIT_COMMIT}\\\""
               )
             }
           }
