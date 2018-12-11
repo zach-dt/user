@@ -2,12 +2,10 @@
 
 def tagMatchRules = [
   [
-    meTypes : [
-      [meType: 'SERVICE']
-    ],
+    meTypes : [ "SERVICE"],
     tags : [
-      [context: 'CONTEXTLESS', key: 'enviornment', value: "dev"],
-      [context: 'CONTEXTLESS', key: 'app', value: "user"],
+      [context: "CONTEXTLESS", key: "enviornment", value: "dev"],
+      [context: "CONTEXTLESS", key: "app", value: "user"],
     ]
   ]
 ]
