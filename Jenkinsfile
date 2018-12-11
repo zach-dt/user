@@ -1,5 +1,4 @@
 @Library('dynatrace@master') _
-import groovy.json.JsonOutput
 
 def tagMatchRules = [
   [
@@ -99,7 +98,7 @@ pipeline {
               def status = pushDynatraceDeploymentEvent (
                 dtTenantUrl : "${DT_TENANT_URL}",
                 dtApiToken : "${DT_API_TOKEN}",
-                tagRule : JsonOutput.toJson(tagMatchRules)
+                tagRule : tagMatchRules
                 //deploymentName : ${env.JOB_NAME}, // default to env.JOB_NAME
                 //annotations : "\\\"deploymentName\\\":\\\"${env.JOB_NAME}\\\", \\\"deploymentVersion\\\":\\\"${env.VERSION}\\\", \\\"deploymentProject\\\":\\\"\\\", \\\"ciBackLink\\\":\\\"${env.BUILD_URL}\\\", \\\"source\\\":\\\"Jenkins\\\"",
                 //customProperties : "\\\"Jenkins Build Number\\\": \\\"${env.BUILD_ID}\\\",  \\\"Git commit\\\": \\\"${env.GIT_COMMIT}\\\""
