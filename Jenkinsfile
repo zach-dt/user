@@ -1,17 +1,17 @@
 @Library('dynatrace@master') _
 
-def tagMatchRules = [
-  [
-    meTypes: [
-      [meType: 'SERVICE']
-    ]
-    ,
-    tags : [
-      [context: 'CONTEXTLESS', key: 'enviornment', value: 'dev'],
-      [context: 'CONTEXTLESS', key: 'app', value: 'user']
-    ]
-  ]
-]
+// def tagMatchRules = [
+//   [
+//     meTypes: [
+//       [meType: 'SERVICE']
+//     ]
+//     ,
+//     tags : [
+//       [context: 'CONTEXTLESS', key: 'enviornment', value: 'dev'],
+//       [context: 'CONTEXTLESS', key: 'app', value: 'user']
+//     ]
+//   ]
+// ]
 
 pipeline {
   agent {
