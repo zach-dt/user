@@ -6,8 +6,8 @@ def tagMatchRules = [
       [meType: 'SERVICE']
     ],
     tags : [
-      [context: 'CONTEXTLESS', key: 'enviornment', value: 'dev'],
-      [context: 'CONTEXTLESS', key: 'app', value: 'user']
+      [context: 'CONTEXTLESS', key: 'app', value: 'user'],
+      [context: 'CONTEXTLESS', key: 'enviornment', value: 'dev']
     ]
   ]
 ]
