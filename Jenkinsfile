@@ -97,10 +97,8 @@ pipeline {
             def status = pushDynatraceDeploymentEvent (
               tagRule : tagMatchRules,
               customProperties : [
-                properties : [
-                  [key: 'Jenkins Build Number', value: "${env.BUILD_ID}"],
-                  [key: 'Git commit', value: "${env.GIT_COMMIT}"]
-                ]
+                [key: 'Jenkins Build Number', value: "${env.BUILD_ID}"],
+                [key: 'Git commit', value: "${env.GIT_COMMIT}"]
               ]
             )
           }
