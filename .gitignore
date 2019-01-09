@@ -1,10 +1,9 @@
-
 # Temp folder
-tmp/*
+/tmp
 
 # Go build folders
-bin
-vendor
+/bin
+/vendor
 
 # Credentials
 credentials.yml
