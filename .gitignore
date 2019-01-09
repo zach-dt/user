@@ -2,9 +2,8 @@
 # Temp folder
 tmp/*
 
-# Binary 
+# Go build folders
 bin
-docker/user/bin	docker/user/bin
 vendor
 
 # Credentials
