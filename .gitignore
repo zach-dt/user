@@ -1,6 +1,11 @@
+
+# Temp folder
+tmp/*
+
+# Binary 
 bin
 docker/user/bin	docker/user/bin
 vendor
+
 # Credentials
 credentials.yml
-jmeter.log
