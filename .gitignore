@@ -1,6 +1,9 @@
-bin
-docker/user/bin	docker/user/bin
-vendor
+# Temp folder
+/tmp
+
+# Go build folders
+/bin
+/vendor
+
 # Credentials
 credentials.yml
-jmeter.log
